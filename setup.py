@@ -3,7 +3,7 @@ import re, ast
 
 _version_re = re.compile(r'__version__\s+=\s+(.*)')
 
-with open('re_map/__init__.py', 'rb') as f:
+with open('jigsaw-toxic-comment-classification-challenge/__init__.py', 'rb') as f:
 	version = str(ast.literal_eval(_version_re.search(
 		f.read().decode('utf-8')).group(1)))
 

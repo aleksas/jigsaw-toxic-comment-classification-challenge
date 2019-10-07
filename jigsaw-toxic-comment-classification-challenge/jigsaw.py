@@ -5,7 +5,7 @@ from __future__ import division
 from __future__ import print_function
 
 import os
-import ZipFile
+from zipfile import ZipFile
 from tensor2tensor.data_generators import generator_utils
 from tensor2tensor.data_generators import problem
 from tensor2tensor.utils import registry
@@ -13,7 +13,7 @@ from tensor2tensor.utils import registry
 import tensorflow as tf
 from re import compile
 
-from problem import Text2MultiLabelProblem
+from .problem import Text2MultiLabelProblem
 
 @registry.register_problem
 class JigsawToxicCommentClassification(Text2MultiLabelProblem):

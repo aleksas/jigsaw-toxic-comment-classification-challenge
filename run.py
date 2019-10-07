@@ -7,12 +7,20 @@ if __name__ == '__main__':
     MODEL='transformer'
 
     USR_DIR='.'
-    DATA_DIR='%APPDATA%/jigsaw/t2t_data'
-    TMP_DIR='%APPDATA%/jigsaw/tmp/t2t_datagen'
-    TRAIN_DIR='%APPDATA%/jigsaw/t2t_train/%s/%s-%s' % (PROBLEM, MODEL, HPARAMS)
+    APPDATA=os.getenv('APPDATA')
+    DATA_DIR='{}\\jigsaw\\t2t_data'.format(APPDATA)
+    TMP_DIR='{}\\jigsaw\\tmp\\t2t_datagen'.format(APPDATA)
+    TRAIN_DIR='{}\\jigsaw\\t2t_train\\{}\\{}-{}'.format(APPDATA, PROBLEM, MODEL, HPARAMS)
     
-    os.mkdir( DATA_DIR )
-    os.mkdir( TMP_DIR )
+    try:
+        os.mkdir( DATA_DIR )
+    except FileExistsError:
+        pass
+    
+    try:
+        os.mkdir( TMP_DIR )
+    except FileExistsError:
+        pass
 
     argv = [
         '--generate_data',

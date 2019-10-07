@@ -18,7 +18,7 @@ from problem import Text2MultiLabelProblem
 @registry.register_problem
 class JigsawToxicCommentClassification(Text2MultiLabelProblem):
   """Jigsaw Toxic Comment Classification."""
-  URL = "jigsaw-toxic-comment-classification-challenge.zip"
+  URL = "https://raw.githubusercontent.com/aleksas/jigsaw-toxic-comment-classification-challenge/master/data/jigsaw-toxic-comment-classification-challenge.zip?token=AAEREJUUNHYAYTZJAPCBUS25TMPSI"
   RE_TRAIN = compile(r'^"([\da-z]+)","("")?(.+?)"("")?,([01]),([01]),([01]),([01]),([01]),([01])\s*$')
   RE_TEST = compile(r'^"([\da-z]+)","("")?(.+?)"("")?\s*$')
   RE_TEST_LABEL = compile(r'^([\da-z]+),([01]),([01]),([01]),([01]),([01]),([01])\s*$')

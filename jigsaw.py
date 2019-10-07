@@ -66,17 +66,16 @@ class JigsawToxicCommentClassification(Text2MultiLabelProblem):
                 else:
                     yield text
     else:
-        test_path = os.path.join(jigsaw_dir, dataset + "test.csv")
-        test_label_path = os.path.join(jigsaw_dir, dataset + "test_labels.csv")
-        
+        test_label_path = os.path.join(jigsaw_dir, "test_labels.csv")
         test_labels = {}
-        with tf.gfile.Open(path) as jigsaw_label_f:
+        with tf.gfile.Open(test_label_path) as jigsaw_label_f:
             doc = jigsaw_f.read()
             for match in self.RE_TEST_LABEL.finditer(doc):
                 comment_id = match.group(1)
                 test_labels[comment_id] = [i*match.group(2 + i) for i in range(6)]
 
-        with tf.gfile.Open(path) as jigsaw_f:
+        test_path = os.path.join(jigsaw_dir, "test.csv")
+        with tf.gfile.Open(test_path) as jigsaw_f:
             doc = jigsaw_f.read()
             for match in self.RE_TEST.finditer(doc):
                 if skip_header:

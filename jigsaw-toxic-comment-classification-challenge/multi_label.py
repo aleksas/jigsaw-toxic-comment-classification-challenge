@@ -1,16 +1,10 @@
 from tensor2tensor.data_generators import text_problems
+from tensor2tensor.data_generators import problem, text_problems, text_encoder
+from tensor2tensor.layers import modalities
+import tensorflow as tf
 
 class Text2MultiLabelProblem(text_problems.Text2TextProblem):
   """Base class for text multi-labeling problems."""
-  
-  def generate_encoded_samples(self, data_dir, tmp_dir, dataset_split):
-    generator = self.generate_samples(data_dir, tmp_dir, dataset_split)
-    encoder = self.get_or_create_vocab(data_dir, tmp_dir)
-    for sample in generator:
-      inputs = encoder.encode(sample["inputs"])
-      inputs.append(text_encoder.EOS_ID)
-      labels = sample["labels"]
-      yield {"inputs": inputs, "targets": labels}
 
   def generate_samples(self, data_dir, tmp_dir, dataset_split):
     """Generate samples of text and label pairs.

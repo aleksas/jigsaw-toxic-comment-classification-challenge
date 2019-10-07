@@ -7,18 +7,18 @@ from __future__ import print_function
 import os
 from zipfile import ZipFile
 from tensor2tensor.data_generators import generator_utils
-from tensor2tensor.data_generators import problem
+from tensor2tensor.data_generators import problem, text_problems
 from tensor2tensor.utils import registry
 
 import tensorflow as tf
 from re import compile
 
-from .problem import Text2MultiLabelProblem
+from .multi_label import Text2MultiLabelProblem
 
 @registry.register_problem
 class JigsawToxicCommentClassification(Text2MultiLabelProblem):
   """Jigsaw Toxic Comment Classification."""
-  URL = "https://github.com/aleksas/jigsaw-toxic-comment-classification-challenge/raw/master/data/jigsaw-toxic-comment-classification-challenge.zip"
+  URL = "https://drive.google.com/open?id=1pCRlILaqd7IpGaBwa5euKd3Vbq4HQVe-"
   RE_TRAIN = compile(r'^"([\da-z]+)","("")?(.+?)"("")?,([01]),([01]),([01]),([01]),([01]),([01])\s*$')
   RE_TEST = compile(r'^"([\da-z]+)","("")?(.+?)"("")?\s*$')
   RE_TEST_LABEL = compile(r'^([\da-z]+),([01]),([01]),([01]),([01]),([01]),([01])\s*$')
@@ -51,7 +51,7 @@ class JigsawToxicCommentClassification(Text2MultiLabelProblem):
 
   def doc_generator(self, jigsaw_dir, dataset, include_label=False):
     if dataset == "train":
-        path = os.path.join(jigsaw_dir, dataset + "train.csv")
+        path = os.path.join(jigsaw_dir, "train.csv")
         skip_header = True
 
         with tf.gfile.Open(path) as jigsaw_f:
@@ -69,7 +69,7 @@ class JigsawToxicCommentClassification(Text2MultiLabelProblem):
         test_label_path = os.path.join(jigsaw_dir, "test_labels.csv")
         test_labels = {}
         with tf.gfile.Open(test_label_path) as jigsaw_label_f:
-            doc = jigsaw_f.read()
+            doc = jigsaw_label_f.read()
             for match in self.RE_TEST_LABEL.finditer(doc):
                 comment_id = match.group(1)
                 test_labels[comment_id] = [i*match.group(2 + i) for i in range(6)]
@@ -93,13 +93,12 @@ class JigsawToxicCommentClassification(Text2MultiLabelProblem):
   def generate_samples(self, data_dir, tmp_dir, dataset_split):
     """Generate examples."""
     # Download and extract
-    compressed_filename = os.path.basename(self.URL)
-    download_path = generator_utils.maybe_download(tmp_dir, compressed_filename,
+    download_path = generator_utils.maybe_download_from_drive(tmp_dir, 'jigsaw-toxic-comment-classification-challenge.zip',
                                                    self.URL)
     jigsaw_dir = os.path.join(tmp_dir, "jigsaw")
     if not tf.gfile.Exists(jigsaw_dir):
       with ZipFile(download_path) as zipfile:
-        zipfile.extractall(tmp_dir)
+        zipfile.extractall(jigsaw_dir)
 
     # Generate samples
     train = dataset_split == problem.DatasetSplit.TRAIN

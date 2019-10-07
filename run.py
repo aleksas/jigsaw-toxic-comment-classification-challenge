@@ -1,26 +1,19 @@
 import sys, os
 from tensor2tensor.bin import t2t_trainer
+import pathlib
 
 if __name__ == '__main__':
     PROBLEM='jigsaw_toxic_comment_classification'
     HPARAMS='transformer_base_single'
     MODEL='transformer'
 
-    USR_DIR='.'
-    APPDATA=os.getenv('APPDATA')
-    DATA_DIR='{}\\jigsaw\\t2t_data'.format(APPDATA)
-    TMP_DIR='{}\\jigsaw\\tmp\\t2t_datagen'.format(APPDATA)
-    TRAIN_DIR='{}\\jigsaw\\t2t_train\\{}\\{}-{}'.format(APPDATA, PROBLEM, MODEL, HPARAMS)
+    USR_DIR='./jigsaw-toxic-comment-classification-challenge'
+    DATA_DIR='/tmp/jigsaw/t2t_data'
+    TMP_DIR='/tmp/jigsaw/t2t_datagen'
+    TRAIN_DIR='/tmp/jigsaw/t2t_train/{}/{}-{}'.format(PROBLEM, MODEL, HPARAMS)
     
-    try:
-        os.mkdir( DATA_DIR )
-    except FileExistsError:
-        pass
-    
-    try:
-        os.mkdir( TMP_DIR )
-    except FileExistsError:
-        pass
+    pathlib.Path( DATA_DIR ).mkdir(parents=True, exist_ok=True)
+    pathlib.Path( TMP_DIR ).mkdir(parents=True, exist_ok=True)
 
     argv = [
         '--generate_data',

@@ -9,6 +9,7 @@ from zipfile import ZipFile
 from tensor2tensor.data_generators import generator_utils
 from tensor2tensor.data_generators import problem, text_problems
 from tensor2tensor.utils import registry
+from tensor2tensor.models.transformer import transformer_base, transformer_base_multistep8
 
 import tensorflow as tf
 import re
@@ -124,3 +125,26 @@ class JigsawToxicCommentClassificationCharacters(JigsawToxicCommentClassificatio
 
   def global_task_id(self):
     return problem.TaskID.EN_CHR_SENT
+
+@registry.register_hparams
+def transformer_multistep_6k():
+  hparams = transformer_base_multistep8()
+
+  hparams.eval_drop_long_sequences=True
+  hparams.learning_rate_warmup_steps=10000
+  hparams.optimizer_multistep_accumulate_steps=12
+
+  hparams.batch_size = 6000
+  
+  hparams.eval_drop_long_sequences=True
+  hparams.learning_rate_constant = 1.0
+  
+  hparams.attention_dropout_broadcast_dims = "0,1"  # batch, heads
+  hparams.relu_dropout_broadcast_dims = "1"  # length
+  hparams.layer_prepostprocess_dropout_broadcast_dims = "1"
+  
+  hparams.attention_dropout = 0.4
+  hparams.relu_dropout = 0.4
+  hparams.layer_prepostprocess_dropout = 0.4
+
+  return hparams

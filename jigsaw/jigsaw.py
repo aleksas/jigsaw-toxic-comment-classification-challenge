@@ -47,7 +47,7 @@ class JigsawToxicCommentClassification(Text2MultiLabelProblem):
 
   def class_labels(self, data_dir):
     del data_dir
-    return ["toxic", "severe_toxic", "obscene", "threat", "insult", "identity_hate"]
+    return ["OK", "toxic", "severe_toxic", "obscene", "threat", "insult", "identity_hate"]
 
   def doc_generator(self, jigsaw_dir, dataset, include_label=False):
     def get_labels(match, offset):

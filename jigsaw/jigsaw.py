@@ -148,3 +148,24 @@ def transformer_multistep_6k():
   hparams.layer_prepostprocess_dropout = 0.4
 
   return hparams
+
+
+@registry.register_hparams
+def transformer_6k():
+  hparams = transformer_base()
+
+  hparams.learning_rate_warmup_steps=10000
+  hparams.batch_size = 6000
+  
+  hparams.eval_drop_long_sequences=True
+  hparams.learning_rate_constant = 1.0
+  
+  hparams.attention_dropout_broadcast_dims = "0,1"  # batch, heads
+  hparams.relu_dropout_broadcast_dims = "1"  # length
+  hparams.layer_prepostprocess_dropout_broadcast_dims = "1"
+  
+  hparams.attention_dropout = 0.4
+  hparams.relu_dropout = 0.4
+  hparams.layer_prepostprocess_dropout = 0.4
+
+  return hparams

@@ -1,8 +1,8 @@
-PROBLEM=jigsaw_toxic_comment_classification
+PROBLEM=jigsaw_toxic_comment_classification_characters
 HPARAMS=transformer_base
 MODEL=transformer
 
-USR_DIR=./jigsaw-toxic-comment-classification-challenge
+USR_DIR=./jigsaw
 DATA_DIR=$HOME/t2t_data
 TMP_DIR=/tmp/t2t_datagen
 TRAIN_DIR=$HOME/t2t_train/$PROBLEM/$MODEL-$HPARAMS

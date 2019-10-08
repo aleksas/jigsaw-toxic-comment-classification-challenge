@@ -11,17 +11,17 @@ from tensor2tensor.data_generators import problem, text_problems
 from tensor2tensor.utils import registry
 
 import tensorflow as tf
-from re import compile
+import re
 
-from multi_label import Text2MultiLabelProblem
+from .multi_label import Text2MultiLabelProblem
 
 @registry.register_problem
 class JigsawToxicCommentClassification(Text2MultiLabelProblem):
   """Jigsaw Toxic Comment Classification."""
   URL = "https://drive.google.com/uc?export=download&id=1pCRlILaqd7IpGaBwa5euKd3Vbq4HQVe-"
-  RE_TRAIN = compile(r'^"([\da-z]+)","("")?(.+?)"("")?,([01]),([01]),([01]),([01]),([01]),([01])\s*$')
-  RE_TEST = compile(r'^"([\da-z]+)","("")?(.+?)"("")?\s*$')
-  RE_TEST_LABEL = compile(r'^([\da-z]+),([01]),([01]),([01]),([01]),([01]),([01])\s*$')
+  RE_TRAIN = re.compile(r'^"([\da-z]+)","("")?(.+?)"("")?,([01]),([01]),([01]),([01]),([01]),([01])\s*$', re.S | re.M)
+  RE_TEST = re.compile(r'^"([\da-z]+)","("")?(.+?)"("")?\s*$', re.S | re.M)
+  RE_TEST_LABEL = re.compile(r'^([\da-z]+),([01]),([01]),([01]),([01]),([01]),([01])\s*$', re.S | re.M)
 
   @property
   def is_generate_per_split(self):
@@ -50,6 +50,10 @@ class JigsawToxicCommentClassification(Text2MultiLabelProblem):
     return ["toxic", "severe_toxic", "obscene", "threat", "insult", "identity_hate"]
 
   def doc_generator(self, jigsaw_dir, dataset, include_label=False):
+    def get_labels(match, offset):
+      labels = [i+1 for i in range(6) if match.group(offset + i) == '1']
+      return (labels if len(labels) else [0])
+
     if dataset == "train":
         path = os.path.join(jigsaw_dir, "train.csv")
         skip_header = True
@@ -62,7 +66,7 @@ class JigsawToxicCommentClassification(Text2MultiLabelProblem):
                     continue
                 text = match.group(3)
                 if include_label:
-                    yield text, [i for i in range(5) if match.group(5 + i) == '1']
+                    yield text, get_labels(match, 5)
                 else:
                     yield text
     else:
@@ -72,8 +76,9 @@ class JigsawToxicCommentClassification(Text2MultiLabelProblem):
             doc = jigsaw_label_f.read()
             for match in self.RE_TEST_LABEL.finditer(doc):
                 comment_id = match.group(1)
-                test_labels[comment_id] = [i*match.group(2 + i) for i in range(6) == '1']
+                test_labels[comment_id] = get_labels(match, 2)
 
+        skip_header = True
         test_path = os.path.join(jigsaw_dir, "test.csv")
         with tf.gfile.Open(test_path) as jigsaw_f:
             doc = jigsaw_f.read()

@@ -3,11 +3,11 @@ from tensor2tensor.bin import t2t_trainer
 import pathlib
 
 if __name__ == '__main__':
-    PROBLEM='jigsaw_toxic_comment_classification'
-    HPARAMS='transformer_base_single'
+    PROBLEM='jigsaw_toxic_comment_classification_characters'
+    HPARAMS='transformer_base'
     MODEL='transformer'
 
-    USR_DIR='./jigsaw-toxic-comment-classification-challenge'
+    USR_DIR='~/labs/jigsaw-toxic-comment-classification-challenge/jigsaw'
     DATA_DIR='/tmp/jigsaw/t2t_data'
     TMP_DIR='/tmp/jigsaw/t2t_datagen'
     TRAIN_DIR='/tmp/jigsaw/t2t_train/{}/{}-{}'.format(PROBLEM, MODEL, HPARAMS)

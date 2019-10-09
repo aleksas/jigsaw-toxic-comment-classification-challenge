@@ -44,11 +44,11 @@ class JigsawToxicCommentClassification(Text2MultiLabelProblem):
 
   @property
   def num_classes(self):
-    return 6
+    return 7
 
-  def class_labels(self, data_dir):
-    del data_dir
-    return ["OK", "toxic", "severe_toxic", "obscene", "threat", "insult", "identity_hate"]
+  #def class_labels(self, data_dir):
+  #  del data_dir
+  #  return ["OK", "toxic", "severe_toxic", "obscene", "threat", "insult", "identity_hate"]
 
   def doc_generator(self, jigsaw_dir, dataset, include_label=False):
     def get_labels(match, offset):

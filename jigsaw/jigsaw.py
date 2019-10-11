@@ -46,14 +46,14 @@ class JigsawToxicCommentClassification(Text2MultiLabelProblem):
   def num_classes(self):
     return 7
 
-  #def class_labels(self, data_dir):
-  #  del data_dir
-  #  return ["OK", "toxic", "severe_toxic", "obscene", "threat", "insult", "identity_hate"]
+  def class_labels(self, data_dir):
+    del data_dir
+    return ["OK", "toxic", "severe_toxic", "obscene", "threat", "insult", "identity_hate"]
 
   def doc_generator(self, jigsaw_dir, dataset, include_label=False):
     def get_labels(match, offset):
       labels = [i+1 for i in range(6) if match.group(offset + i) == '1']
-      return (labels if len(labels) else [0])
+      return labels if labels else [0]
 
     if dataset == "train":
         path = os.path.join(jigsaw_dir, "train.csv")
@@ -112,7 +112,7 @@ class JigsawToxicCommentClassification(Text2MultiLabelProblem):
     for doc, labels in self.doc_generator(jigsaw_dir, dataset, include_label=True):
       yield {
           "inputs": doc,
-          "labels": [int(label) for label in labels],
+          "labels": [label for label in labels],
       }
 
 @registry.register_problem
@@ -124,7 +124,7 @@ class JigsawToxicCommentClassificationCharacters(JigsawToxicCommentClassificatio
     return text_problems.VocabType.CHARACTER
 
   def global_task_id(self):
-    return problem.TaskID.EN_CHR_SENT
+    return problem.TaskID.EN_CHR
 
 @registry.register_hparams
 def transformer_multistep_6k():

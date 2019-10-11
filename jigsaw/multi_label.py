@@ -69,7 +69,7 @@ class Text2MultiLabelProblem(text_problems.Text2TextProblem):
   def example_reading_spec(self):
     data_fields = {
         "inputs": tf.VarLenFeature(tf.int64),
-        "targets": tf.FixedLenSequenceFeature((), tf.int64, allow_missing=True),
+        "targets": tf.VarLenFeature(tf.int64),
     }
     data_items_to_decoders = None
     return (data_fields, data_items_to_decoders)

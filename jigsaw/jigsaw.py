@@ -9,7 +9,7 @@ from zipfile import ZipFile
 from tensor2tensor.data_generators import generator_utils
 from tensor2tensor.data_generators import problem, text_problems
 from tensor2tensor.utils import registry
-from tensor2tensor.models.transformer import transformer_base, transformer_base_multistep8
+from tensor2tensor.models.transformer import transformer_base, transformer_base_multistep8, transformer_tiny
 
 import tensorflow as tf
 import re
@@ -23,6 +23,10 @@ class JigsawToxicCommentClassification(Text2MultiLabelProblem):
   RE_TRAIN = re.compile(r'^"([\da-z]+)","("")?(.+?)"("")?,([01]),([01]),([01]),([01]),([01]),([01])\s*$', re.S | re.M)
   RE_TEST = re.compile(r'^"([\da-z]+)","("")?(.+?)"("")?\s*$', re.S | re.M)
   RE_TEST_LABEL = re.compile(r'^([\da-z]+),([01]),([01]),([01]),([01]),([01]),([01])\s*$', re.S | re.M)
+
+  @property
+  def max_subtoken_length(self):
+    return 100
 
   @property
   def is_generate_per_split(self):
@@ -112,7 +116,7 @@ class JigsawToxicCommentClassification(Text2MultiLabelProblem):
     for doc, labels in self.doc_generator(jigsaw_dir, dataset, include_label=True):
       yield {
           "inputs": doc,
-          "labels": [label for label in labels],
+          "labels": labels,
       }
 
 @registry.register_problem
@@ -168,4 +172,26 @@ def transformer_6k():
   hparams.relu_dropout = 0.4
   hparams.layer_prepostprocess_dropout = 0.4
 
+  return hparams
+
+
+@registry.register_hparams
+def transformer_tiny_6k():
+  hparams = transformer_tiny()
+  hparams.batch_size = 6000
+
+  return hparams
+
+@registry.register_hparams
+def transformer_tiny_1500():
+  hparams = transformer_tiny()
+  hparams.batch_size = 1500
+
+  return hparams
+
+@registry.register_hparams
+def transformer_multi_8000():
+  hparams = transformer_base_multistep8()
+  hparams.batch_size = 8000
+  hparams.eval_drop_long_sequences=True
   return hparams
